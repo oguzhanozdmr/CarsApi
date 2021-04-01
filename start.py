@@ -9,10 +9,9 @@ def create_json():
 
 
 def main():
-    if isfile('./config.ini'):
+    if isfile('./cars_config_2.ini'):
         parser = ConfigParser()
-        parser.read('config.ini')
-
+        parser.read('./cars_config_2.ini')
         json_path = parser.get('files', 'filter_path')
         if isfile(json_path):
             app.run(debug=True)

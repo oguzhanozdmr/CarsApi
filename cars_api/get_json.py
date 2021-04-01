@@ -4,22 +4,20 @@
 # pylint: disable=C0116:
 import requests
 import json
+from configparser import ConfigParser
 
 
 class GetJson:
-    _domain_url = ""
-    _headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, '
-                              'like Gecko) Version/13.1.3 Safari/605.1.15',
-                'Accept-Language': 'tr-TR,tr;q=0.8,en-US;q=0.5,en;q=0.3',
-                'Accept-Encoding': 'gzip, deflate',
-                'Content-Type': 'application/ocsp-request'}
-
     def __init__(self,
                  protocol: str = 'https://',
                  domain_name: str = 'www.cars.com',
-                 path: str = '/for-sale/listings/'):
+                 path: str = '/for-sale/listings/',
+                 query: str = ""):
         if protocol and domain_name and path:
-            self._domain_url = protocol + domain_name + path
+            self._domain_url = protocol + domain_name + path + query
+        config = ConfigParser()
+        config.read('../CarsApi/cars_config_2.ini')
+        self._headers = config['request_header']
 
     def get_requests(self):
         if self._domain_url:
@@ -27,9 +25,6 @@ class GetJson:
             if json_request.status_code == requests.codes.ok:
                 return json_request.json()
         return None
-
-    def create_query(self):
-        pass
 
 
 class CarFilters(GetJson):
@@ -88,6 +83,24 @@ if __name__ == '__main__':
     #print(cc.get_trans_type_id())
     #print(cc.get_color_id())
     #print(cc.get_year_id())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 """
 # -*- coding: utf-8 -*-
