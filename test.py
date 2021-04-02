@@ -7,7 +7,7 @@ try:
     import unittest
     from cars_api import app, CarInfo, controller
     from werkzeug.datastructures import MultiDict, ImmutableMultiDict
-
+    from flask import json
 except Exception as ex:
     print(f'Missing {ex}')
 
@@ -65,6 +65,12 @@ class FlaskTest(unittest.TestCase):
         self.assertEqual(car.price, 30950)
         self.assertEqual(car.trans_type, 'Automatic')
         self.assertEqual(car.year, 2020)
+
+    def test_return_count(self):
+        tester = app.test_client(self)
+        response = tester.get('/cars/list')
+        data = json.loads(response.data)['cars']
+        self.assertEqual(len(data), 50)
 
 
 if __name__ == '__main__':
