@@ -6,7 +6,7 @@ from os.path import isfile
 from cars_api.get_json import GetJson, create_dict
 
 config = ConfigParser()
-config.read('../CarsApi/cars_config_2.ini')
+config.read('../CarsApi/cars_config.ini')
 
 
 def read_filters():

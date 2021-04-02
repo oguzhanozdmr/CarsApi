@@ -12,7 +12,7 @@ class GetJson:
     """
     def __init__(self, query: str = ""):
         config = ConfigParser()
-        config.read('../CarsApi/cars_config_2.ini')
+        config.read('../CarsApi/cars_config.ini')
         self._domain_url = config['request_settings']['url'] + query
         self._headers = config['request_header']
 

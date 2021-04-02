@@ -3,6 +3,7 @@
     @author= Adem Oğuzhan Özdemir
     @email = ademoguzhanozdmr@gmail.com
     @version = 1.0
+    @desc = my first api
 """
 from os.path import isfile
 from configparser import ConfigParser
@@ -21,9 +22,9 @@ def main():
     """
     running server
     """
-    if isfile('./cars_config_2.ini'):
+    if isfile('./cars_config.ini'):
         parser = ConfigParser()
-        parser.read('./cars_config_2.ini')
+        parser.read('./cars_config.ini')
         json_path = parser.get('files', 'filter_path')
         if isfile(json_path):
             app.run(debug=True)
@@ -31,7 +32,7 @@ def main():
             create_car_filters_json()
             print("json have been created. Run it again")
     else:
-        print("Config.ini is missing")
+        print("cars_config.ini is missing")
 
 
 if __name__ == '__main__':

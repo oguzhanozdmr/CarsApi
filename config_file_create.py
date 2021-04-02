@@ -30,5 +30,5 @@ config['files'] = {
     'filter_path': './data/car_filters.json'
 }
 
-with open('cars_config_2.ini', 'w+') as file:
+with open('cars_config.ini', 'w+') as file:
     config.write(file)
