@@ -1,25 +1,18 @@
-from flask import jsonify, request
+# -*- coding: utf-8 -*-
+import json
+from flask import request
 from configparser import ConfigParser
 from os.path import isfile
-import json
+from cars_api.get_json import GetJson, create_dict
 
 config = ConfigParser()
 config.read('../CarsApi/cars_config_2.ini')
 
 
-def read_query_header():
-    config.sections()
-    header = config['query_header']
-    color_query = header['exterior_color']
-    brand_query = header['brand']
-    year_query = header['year']
-    request_query = header['trans_type']
-    return color_query, brand_query, year_query, request_query
-
-
 def read_filters():
     path = config['files']['filter_path']
     assert isfile(path), 'Car filters not found'
+
     with open(path, 'r') as file:
         filters = json.load(file)
         file.close()
@@ -27,27 +20,41 @@ def read_filters():
 
 
 def args_to_query(args):
-    color_query, brand_query, year_query, request_query = read_query_header()
+    config.sections()
+    header = config['query_header']
     _filter = read_filters()
+    query = ''
+    to_query = config['header_to_cars_api']
 
-    query = ""
-    if color_query in args:
-        exterior_color = args.get(color_query)
-        if exterior_color in _filter["colors"]:
-            color_id = _filter["colors"][exterior_color]
-            query += ""
+    if header['exterior_color'] in args:
+        exterior_color = args.get(header['exterior_color']).lower()
+        if exterior_color in _filter['colors']:
+            color_id = _filter['colors'][exterior_color]
+            query += f'{to_query["exterior_color"]}={color_id}&'
 
-    if brand_query in args:
-        brand = args.get(brand_query)
-    if year_query in args:
-        year = args.get(year_query)
-    if request_query in request.args:
-        trans_type = request.args.get(request_query)
+    if header['brand'] in args:
+        brand = args.get(header['brand']).lower()
+        if brand in _filter['brands']:
+            brand_id = _filter['brands'][brand]
+            query += f'{to_query["brand"]}={brand_id}&'
+
+    if header['year'] in args:
+        year = args.get(header['year'])
+        if year in _filter['years']:
+            year_id = _filter['years'][year]
+            query += f'{to_query["year"]}={year_id}&'
+
+    if header['trans_type'] in request.args:
+        trans_type = request.args.get( header['trans_type']).lower()
+        if trans_type in _filter['trans']:
+            trans_id = _filter['trans'][trans_type]
+            query += f'{to_query["trans_type"]}={trans_id}&'
+
+    query = f"?perPage={config['request_settings']['per_page']}&{query}"
+    return query[:-1]
 
 
 def car_list(args):
-    if args:
-        query = args_to_query(args)
-    read_filters()
-
-
+    query = args_to_query(args)
+    get_json = GetJson(query=query)
+    return create_dict(get_json.get_requests())

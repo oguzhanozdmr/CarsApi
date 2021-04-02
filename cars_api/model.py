@@ -1,16 +1,7 @@
 # -*- coding: utf-8 -*-
-from typing import Any
-
-
-def from_str(x: Any) -> str:
-    assert isinstance(x, str)
-    return x
-
-
-def from_list(x: Any) -> list:
-    assert isinstance(x, list)
-    return x
-
+# pylint: disable=C0114:
+# pylint: disable=C0115:
+# pylint: disable=C0116:
 
 class CarInfo:
     def __init__(self,
@@ -18,33 +9,33 @@ class CarInfo:
                  image_url: list = None,
                  price: str = None,
                  brand: str = None,
-                 model: str = None,
+                 year: int = None,
                  exterior_color: str = None,
                  trans_type: str = None):
         if image_url is None:
             # list is mutable
             image_url = []
-        self._car_header = from_str(header)
-        self._car_image = from_list(image_url)
-        self._car_price = from_str(price)
-        self._car_brand = from_str(brand)
-        self._car_model = from_str(model)
-        self._car_exterior_color = from_str(exterior_color)
-        self._car_trans_type = from_str(trans_type)
+        self._car_header = header
+        self._car_image = image_url
+        self._car_price = price
+        self._car_brand = brand
+        self._car_year = year
+        self._car_exterior_color = exterior_color
+        self._car_trans_type = trans_type
 
     def to_dict(self) -> dict:
         results = {"header": self._car_header, "image_url": self._car_image, "price": self._car_price,
-                   "brand": self._car_brand, "model": self._car_model, "exterior_color": self._car_exterior_color,
+                   "brand": self._car_brand, "year": self._car_year, "exterior_color": self._car_exterior_color,
                    "trans_type": self._car_trans_type}
         return results
 
     @property
-    def char_header(self):
+    def header(self):
         return self._car_header
 
-    @char_header.setter
-    def char_header(self, value):
-        self._car_header = from_str(value)
+    @header.setter
+    def header(self, value):
+        self._car_header = value
 
     @property
     def price(self):
@@ -52,7 +43,7 @@ class CarInfo:
 
     @price.setter
     def price(self, value):
-        self._car_price = from_str(value)
+        self._car_price = value
 
     @property
     def brand(self):
@@ -60,15 +51,15 @@ class CarInfo:
 
     @brand.setter
     def brand(self, value):
-        self._car_brand = from_str(value)
+        self._car_brand = value
 
     @property
-    def model(self):
-        return self._car_model
+    def year(self):
+        return self._car_year
 
-    @model.setter
-    def model(self, value):
-        self._car_model = from_str(value)
+    @year.setter
+    def year(self, value):
+        self._car_year = value
 
     @property
     def exterior_color(self):
@@ -76,7 +67,7 @@ class CarInfo:
 
     @exterior_color.setter
     def exterior_color(self, value):
-        self._car_exterior_color = from_str(value)
+        self._car_exterior_color = value
 
     @property
     def trans_type(self):
@@ -84,7 +75,7 @@ class CarInfo:
 
     @trans_type.setter
     def trans_type(self, value):
-        self._car_trans_type = from_str(value)
+        self._car_trans_type = value
 
     @property
     def image(self):
@@ -92,4 +83,4 @@ class CarInfo:
 
     @image.setter
     def image(self, value):
-        self._car_image = from_list(value)
+        self._car_image = value

@@ -1,25 +1,27 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=C0114:
-# pylint: disable=C0115:
-# pylint: disable=C0116:
 import requests
 import json
 from configparser import ConfigParser
+from .model import CarInfo
+from .html_scraping import Scraping
 
 
 class GetJson:
-    def __init__(self,
-                 protocol: str = 'https://',
-                 domain_name: str = 'www.cars.com',
-                 path: str = '/for-sale/listings/',
-                 query: str = ""):
-        if protocol and domain_name and path:
-            self._domain_url = protocol + domain_name + path + query
+    """
+    getting Json from cars.com
+    """
+    def __init__(self, query: str = ""):
         config = ConfigParser()
         config.read('../CarsApi/cars_config_2.ini')
+        self._domain_url = config['request_settings']['url'] + query
         self._headers = config['request_header']
 
     def get_requests(self):
+        """
+        getting json from cars.com
+        return
+        request_json
+        """
         if self._domain_url:
             json_request = requests.get(self._domain_url, headers=self._headers)
             if json_request.status_code == requests.codes.ok:
@@ -28,21 +30,34 @@ class GetJson:
 
 
 class CarFilters(GetJson):
+    """
+     getting car filters from cars.com
+    """
     _class_filters = {'brand': 3, 'year': 2, 'color': 6, 'trans': 10}
 
     def __init__(self):
         super().__init__()
         self._car_json_data = super().get_requests()['json']['filters']['allFilters']
 
-    def get_brand_id(self):
-        brands_dic = {}
+    def get_brand_id(self) -> dict:
+        """
+        getting make for cars.com
+        return
+        brand_dict: dict = brand dict value
+        """
+        brand_dict = {}
         if self._car_json_data:
             brands = self._car_json_data[self._class_filters['brand']]['values']
             for brand in brands:
-                brands_dic[brand['name']] = brand['id']
-        return brands_dic
+                brand_dict[brand['name'].lower()] = brand['id']
+        return brand_dict
 
-    def get_year_id(self):
+    def get_year_id(self) -> dict:
+        """
+        getting year for cars.com
+        return
+        years_dict: dict = year dict value
+        """
         years_dic = {}
         if self._car_json_data:
             years = self._car_json_data[self._class_filters['year']]["values"]
@@ -50,89 +65,59 @@ class CarFilters(GetJson):
                 years_dic[year['name']] = year['id']
         return years_dic
 
-    def get_color_id(self):
+    def get_color_id(self) -> dict:
+        """
+        getting color for cars.com
+        return
+        colors_dic: dict = color dict value
+        """
         colors_dic = {}
         if self._car_json_data:
             colors = self._car_json_data[self._class_filters['color']]["values"]
             for color in colors:
-                colors_dic[color['name']] = color['id']
+                colors_dic[color['name'].lower()] = color['id']
         return colors_dic
 
-    def get_trans_type_id(self):
+    def get_trans_type_id(self) -> dict:
+        """
+        getting trans_type for cars.com
+        return
+        trans_types_dic: dict = trans_type_dic dict value
+        """
         trans_types_dic = {}
         if self._car_json_data:
             types = self._car_json_data[self._class_filters['trans']]["values"]
             for _type in types:
-                trans_types_dic[_type['name']] = _type['id']
+                trans_types_dic[_type['name'].lower()] = _type['id']
         return trans_types_dic
 
     def save_filter(self):
+        """
+        saving car filters
+        """
         brands = self.get_brand_id()
         colors = self.get_color_id()
         years = self.get_year_id()
         trans = self.get_trans_type_id()
         filters = {'brands': brands, 'colors': colors, 'years': years, 'trans': trans}
-        with open("../data/car_filters.json", "w+") as file:
+        with open("../CarsApi/data/car_filters.json", "w+") as file:
             json.dump(filters, file, indent=4, sort_keys=True)
             file.close()
 
-if __name__ == '__main__':
-    cc = CarFilters()
-    print(cc.get_brand_id())
-    cc.save_filter()
-    #print(cc.get_trans_type_id())
-    #print(cc.get_color_id())
-    #print(cc.get_year_id())
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-# -*- coding: utf-8 -*-
-
-
-https://stackoverflow.com/questions/50918276/deploying-flask-app-on-cherrypy-server/50949979
-
-install cherrypy:
-    conda install -c anaconda cherrypy
-
-
-try:
-    from cheroot.wsgi import Server as WSGIServer, PathInfoDispatcher
-except ImportError:
-    from cherrypy.wsgiserver import CherryPyWSGIServer as WSGIServer, WSGIPathInfoDispatcher as PathInfoDispatcher
-
-import time
-from flask import Flask
-app1 = Flask(__name__)
-
-app1.secret_key = 'abcdef'
-
-@app1.route('/u1')
-def hello():
-    print("başladı")
-    time.sleep(6)
-    print("bitti1")
-
-
-if __name__ == '__main__':
-   # app1.run()
-    dispatcher = PathInfoDispatcher({'/': app1})
-    server = WSGIServer(("127.0.0.1", 8091), dispatcher)
-    server.start()
-"""
+def create_dict(json_data) -> dict:
+    """
+    creating new dict
+    """
+    car_detail_dict = {'cars': []}
+    html_scraping = Scraping(json_data['html']['listings'])
+    car_json_detail = json_data['dtm']['vehicle']
+    for car_detail in car_json_detail:
+        car = CarInfo()
+        car.header = f"{car_detail['year']}  {car_detail['make']} {car_detail['model']} {car_detail['trim']}"
+        car.image, car.exterior_color, car.trans_type = html_scraping.get_data(car_detail['listingId'])
+        car.price = car_detail['price']
+        car.brand = f"{car_detail['make']}"
+        car.year = car_detail['year']
+        car_detail_dict['cars'].append(car.to_dict())
+    return car_detail_dict

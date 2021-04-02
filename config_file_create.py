@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from configparser import ConfigParser
 
 config = ConfigParser()
@@ -8,7 +9,16 @@ config['header_to_cars_api'] = {
     'year': 'yrId',
     'trans_type': 'transTypeId'
 }
-
+config['query_header'] = {
+    'exterior_color': 'extcolor',
+    'brand': 'brand',
+    'year': 'year',
+    'trans_type': 'trans'
+}
+config['request_settings'] = {
+    'per_page': '50',
+    'url': 'https://www.cars.com/for-sale/listings',
+}
 config['request_header'] = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, '
                   'like Gecko) Version/13.1.3 Safari/605.1.15',
@@ -16,14 +26,6 @@ config['request_header'] = {
     'Accept-Encoding': 'gzip, deflate',
     'Content-Type': 'application/ocsp-request'
 }
-
-config['query_header'] = {
-    'exterior_color': 'extcolor',
-    'brand': 'brand',
-    'year': 'year',
-    'trans_type': 'trans'
-}
-
 config['files'] = {
     'filter_path': './data/car_filters.json'
 }
