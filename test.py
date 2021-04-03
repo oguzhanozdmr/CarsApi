@@ -134,10 +134,10 @@ class FlaskTest(unittest.TestCase):
             self.assertEqual(response.status_code, requests.codes.ok, msg=f'status code {response.status_code}')
 
     def test_three_params_control(self):
-        years = ['2020', '1990']
+        years = ['2020', '2016']
         brands = ['bmw', 'audi']
         trans_types = ['manual', 'automatic']
-        for year, trans, brand in zip(years, brands, trans_types):
+        for year, trans, brand in zip(years, trans_types, brands):
             tester = app.test_client(self)
             response = tester.get(f'{self.main_path}?trans={trans}&brand={brand}&year={year}')
             json_data = json.loads(response.data)['cars']
