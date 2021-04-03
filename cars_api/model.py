@@ -7,7 +7,7 @@ class CarInfo:
     def __init__(self,
                  header: str = None,
                  image_url: list = None,
-                 price: str = None,
+                 price: int = None,
                  brand: str = None,
                  year: int = None,
                  exterior_color: str = None,
