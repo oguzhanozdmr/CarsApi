@@ -2,6 +2,23 @@
 # pylint: disable=C0114:
 # pylint: disable=C0115:
 # pylint: disable=C0116:
+from typing import Any
+
+
+def from_str(x: Any) -> str:
+    assert isinstance(x, str)
+    return x
+
+
+def from_list(x: Any):
+    assert isinstance(x, list)
+    return x
+
+
+def from_int(x: Any) -> int:
+    assert isinstance(x, int) and not isinstance(x, bool)
+    return x
+
 
 class CarInfo:
     def __init__(self,
@@ -35,7 +52,7 @@ class CarInfo:
 
     @header.setter
     def header(self, value):
-        self._car_header = value
+        self._car_header = from_str(value)
 
     @property
     def price(self):
@@ -43,7 +60,7 @@ class CarInfo:
 
     @price.setter
     def price(self, value):
-        self._car_price = value
+        self._car_price = from_int(value)
 
     @property
     def brand(self):
@@ -51,7 +68,7 @@ class CarInfo:
 
     @brand.setter
     def brand(self, value):
-        self._car_brand = value
+        self._car_brand = from_str(value)
 
     @property
     def year(self):
@@ -59,7 +76,7 @@ class CarInfo:
 
     @year.setter
     def year(self, value):
-        self._car_year = value
+        self._car_year = from_int(value)
 
     @property
     def exterior_color(self):
@@ -67,7 +84,7 @@ class CarInfo:
 
     @exterior_color.setter
     def exterior_color(self, value):
-        self._car_exterior_color = value
+        self._car_exterior_color = from_str(value)
 
     @property
     def trans_type(self):
@@ -75,7 +92,7 @@ class CarInfo:
 
     @trans_type.setter
     def trans_type(self, value):
-        self._car_trans_type = value
+        self._car_trans_type = from_str(value)
 
     @property
     def image(self):
@@ -83,4 +100,4 @@ class CarInfo:
 
     @image.setter
     def image(self, value):
-        self._car_image = value
+        self._car_image = from_list(value)

@@ -22,5 +22,3 @@ def info():
                <p>/cars/list?brand=BMW&extcolor=black : Siyah renkli BMW 50 tane araç</p>
                <p>/cars/list?trans=automatic&brand=Ford&year=2018 : Otomatik vites türündeki 2018 yılına ait Ford marka 50  araç. </p>
             """
-
-

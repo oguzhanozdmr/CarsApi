@@ -2,8 +2,6 @@
 import requests
 import json
 from configparser import ConfigParser
-from .model import CarInfo
-from .html_scraping import Scraping
 
 
 class GetJson:
@@ -103,21 +101,3 @@ class CarFilters(GetJson):
         with open("../CarsApi/data/car_filters.json", "w+") as file:
             json.dump(filters, file, indent=4, sort_keys=True)
             file.close()
-
-
-def create_dict(json_data) -> dict:
-    """
-    creating new dict
-    """
-    car_detail_dict = {'cars': []}
-    html_scraping = Scraping(json_data['html']['listings'])
-    car_json_detail = json_data['dtm']['vehicle']
-    for car_detail in car_json_detail:
-        car = CarInfo()
-        car.header = f"{car_detail['year']}  {car_detail['make']} {car_detail['model']} {car_detail['trim']}"
-        car.image, car.exterior_color, car.trans_type = html_scraping.get_data(car_detail['listingId'])
-        car.price = car_detail['price']
-        car.brand = f"{car_detail['make']}"
-        car.year = car_detail['year']
-        car_detail_dict['cars'].append(car.to_dict())
-    return car_detail_dict
